@@ -1,0 +1,25 @@
+rm(list = ls())
+dev.off()
+options(stringsAsFactors = F)
+#BiocManager::install('Mfuzz')
+library(Mfuzz)
+
+data<-read.csv("mfuzz.csv",head=TRUE,sep=",",row.names=1)
+count<-data.matrix(data)
+dat<-new("ExpressionSet",exprs=count)
+dat <- filter.NA(dat, thres = 0.5)
+dat <- fill.NA(dat, mode = 'mean')
+dat <- filter.std(dat, min.std = 0)
+
+dat <- standardise(dat)
+n <-5
+m <- mestimate(dat)
+set.seed(1000)
+cl <- mfuzz(dat, c = n, m = m)
+mfuzz.plot(dat, cl = cl, mfrow = c(4, 4), time.labels = seq(0,3, 1))
+cl$size
+head(cl$cluster)
+head(cl$membership)
+gene_cluster <- cbind(cl$cluster, cl$membership)
+colnames(gene_cluster)[1] <- 'cluster'
+write.table(gene_cluster, 'mfuzz-5.txt', sep = '\t', col.names = NA, quote = FALSE)
