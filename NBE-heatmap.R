@@ -3,14 +3,11 @@ library(readxl)
 library(dplyr)
 library(tidyr)
 library(pheatmap)
-
 data <- read.csv('heatmap.csv', row.names = 1, header = TRUE)
-data_scaled <- t(scale(t(data)))  # ת?ú???׼??????ת?û?��
-
+data_scaled <- t(scale(t(data))) 
 min_val <- quantile(data_scaled, 0.01, na.rm = TRUE)
 max_val <- quantile(data_scaled, 0.99, na.rm = TRUE)
-bk <- seq(min_val, max_val, length = 50)  # ??̬???? 50 ???ϵ?
-
+bk <- seq(min_val, max_val, length = 50) 
 pdf("heatmap_fixed.pdf", width = 5, height = 7)
 p1 <- pheatmap(
   data,
